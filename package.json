@@ -12,19 +12,19 @@
     "rabbit:start": "./src/scripts/rabbit.sh start",
     "rabbit:stop": "./src/scripts/rabbit.sh stop",
     "rabbit:logs": "./src/scripts/rabbit.sh logs",
-    
     "pg:start": "./src/scripts/postgres.sh start",
     "pg:stop": "./src/scripts/postgres.sh stop",
     "pg:logs": "./src/scripts/postgres.sh logs",
-
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-
     "scheduler": "npx tsx src/scheduler/index.ts",
-    "notifier": "npx tsx src/notifier/index.ts"
+    "notifier": "npx tsx src/notifier/index.ts",
+    "server": "npx tsx src/server/index.ts"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.8",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.6.0",
     "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^8.0.0",
@@ -36,8 +36,11 @@
   "dependencies": {
     "@msgpack/msgpack": "^3.1.3",
     "amqplib": "^1.0.3",
+    "argon2": "^0.44.0",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "node-cron": "^4.2.1",
     "nodemailer": "^8.0.7",
     "pg": "^8.20.0",
