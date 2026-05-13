@@ -1,14 +1,22 @@
 import { Router } from "express";
-import { handleRegister } from "./users.js";
+import { handlerLogin } from "./login.js";
+import { handlerRegister } from "./users.js";
+
 
 const router = Router();
 
+
 router.post("/register", async (req, res, next) => {
   try {
-    await handleRegister(req, res);
+    await handlerRegister(req, res);
   }catch (err) {
     next(err); // Pass the error to the errorMiddleware
   }
+});
+
+
+router.post("/login", async (req, res, next) => {
+  Promise.resolve(handlerLogin(req, res)).catch(next);
 });
 
 
