@@ -2,10 +2,10 @@ import type { Request, Response } from "express";
 import type { NewUser } from "../../db/schema.js";
 import { createUser } from "../../db/queries/users.js";
 import { BadRequestError } from "./errors.js";
-import argon2 from "argon2";
+import { hashPassword } from "./auth.js";
 
 
-export async function handleRegister(req: Request, res: Response) {
+export async function handlerRegister(req: Request, res: Response) {
   type parameters = {
     username: string;
     email: string;
@@ -17,7 +17,7 @@ export async function handleRegister(req: Request, res: Response) {
     throw new BadRequestError("Missing required fields");
   }
 
-  const passwordHash = await argon2.hash(params.password);
+  const passwordHash = await hashPassword(params.password);
 
   const newUser: NewUser = {
     username : params.username,
