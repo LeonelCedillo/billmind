@@ -1,5 +1,6 @@
 import { db } from "../client.js";
-import { type NewBill, bills, type NewBillMember, billMembers} from "../schema.js";
+import { bills, billMembers, reminderRules} from "../schema.js";
+import type { NewBill, NewBillMember, NewReminderRule } from "../schema.js";
 
 
 export async function createBill(newBill: NewBill) {
@@ -10,5 +11,11 @@ export async function createBill(newBill: NewBill) {
 
 export async function addBillMember(billMember: NewBillMember) {
   const [result] = await db.insert(billMembers).values(billMember).returning();
+  return result;
+}
+
+
+export async function addReminderRule(reminderRule: NewReminderRule) {
+  const [result] = await db.insert(reminderRules).values(reminderRule).returning();
   return result;
 }

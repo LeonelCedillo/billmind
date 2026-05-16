@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import type { NewBill } from "../../db/schema.js";
+import type { NewBill, NewBillMember, NewReminderRule } from "../../db/schema.js";
+import { addBillMember, createBill, addReminderRule } from "../../db/queries/bills.js";
 import { BadRequestError } from "./errors.js";
-import { addBillMember, createBill } from "../../db/queries/bills.js";
 
 
 export async function handlerBillsCreate(req: Request, res: Response) {
@@ -47,24 +47,38 @@ export function validateJWT() {
 // billMembers Table -------------------------------------
 
 export async function handlerBillMembersAdd(req: Request, res: Response) {
-  type parameters = {
-    billId: string;
-    userId: string;
-  }
-
-  const params: parameters = {
+  const newBillMember: NewBillMember = {
     billId: req.params.billId as string,
-    userId: req.body.userId as string
-  }
+    userId: req.body.userId
+  };
 
-  if (!params.billId || !params.userId) {
+  if (!newBillMember.billId || !newBillMember.userId) {
     throw new BadRequestError("Missing Required Field");
   }
 
-  const billMember = await addBillMember(params);
+  const billMember = await addBillMember(newBillMember);
   if (!billMember) {
     throw new Error("Could not create bill member");
   }
 
   res.status(201).json(billMember);
+}
+
+
+export async function handlerBillRemindersAdd(req: Request, res: Response) {
+  const newReminderRule: NewReminderRule = {
+    billId: req.params.billId as string,
+    daysBeforeDue: req.body.daysBeforeDue
+  };
+
+  if (!newReminderRule.billId || !newReminderRule.daysBeforeDue) {
+    throw new BadRequestError("Missing Required Field");
+  }  
+
+  const reminderRule = await addReminderRule(newReminderRule);
+  if (!reminderRule) {
+    throw new Error("Could not create reminder rule");
+  }
+
+  res.status(201).json(reminderRule);
 }
