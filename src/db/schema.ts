@@ -48,6 +48,7 @@ export const billMembers = pgTable("bill_members", {
 );
 
 export type BillMember = typeof billMembers.$inferSelect;
+export type NewBillMember = typeof billMembers.$inferInsert;
 
 
 export const reminderRules = pgTable("reminder_rules", {

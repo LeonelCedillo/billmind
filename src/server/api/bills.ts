@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import type { NewBill } from "../../db/schema.js";
 import { BadRequestError } from "./errors.js";
-import { createBill } from "../../db/queries/bills.js";
+import { addBillMember, createBill } from "../../db/queries/bills.js";
 
 
 export async function handlerBillsCreate(req: Request, res: Response) {
@@ -41,4 +41,30 @@ export async function handlerBillsCreate(req: Request, res: Response) {
 // Temp function **********************
 export function validateJWT() {
   return String(process.env.TEST_USER_ID);
+}
+
+
+// billMembers Table -------------------------------------
+
+export async function handlerBillMembersAdd(req: Request, res: Response) {
+  type parameters = {
+    billId: string;
+    userId: string;
+  }
+
+  const params: parameters = {
+    billId: req.params.billId as string,
+    userId: req.body.userId as string
+  }
+
+  if (!params.billId || !params.userId) {
+    throw new BadRequestError("Missing Required Field");
+  }
+
+  const billMember = await addBillMember(params);
+  if (!billMember) {
+    throw new Error("Could not create bill member");
+  }
+
+  res.status(201).json(billMember);
 }
