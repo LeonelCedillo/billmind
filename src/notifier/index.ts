@@ -4,11 +4,6 @@ import { BillReminderPrefix, ExchangeBillMindTopic } from "../routing/routing.js
 import { SimpleQueueType, AckType, subscribeJSON } from "../pubsub/consume.js";
 import type { BillReminderEvent } from "../types/index.js";
 import { sendReminderEmail } from "./mailer.js";
-import { getBillsWithRemindersForToday } from "../db/queries/reminders.js";
-
-
-const bills = await getBillsWithRemindersForToday();
-console.log("Bills found:", bills);
 
 
 async function main() {
@@ -36,16 +31,14 @@ async function main() {
 
   // Declares a Single queue (and binds it to an Exhange) 
   // subscribing to all reminder events via wildcard
-  for (const bill of bills) {
-    await subscribeJSON(
-      conn, 
-      ExchangeBillMindTopic, 
-      `${BillReminderPrefix}.all`, // Queue: one queue for all reminders
-      `${BillReminderPrefix}.*`,   // RKey: matches bill.reminder.anyone
-      SimpleQueueType.Transient, 
-      handlerLog()
-    );
-  }
+  await subscribeJSON(
+    conn, 
+    ExchangeBillMindTopic, 
+    `${BillReminderPrefix}.all`, // Queue: one queue for all reminders
+    `${BillReminderPrefix}.*`,   // RKey: matches bill.reminder.anyone
+    SimpleQueueType.Transient, 
+    handlerLog()
+  );
 }
 
 export function handlerLog(): (event: BillReminderEvent) => Promise<AckType>{
