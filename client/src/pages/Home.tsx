@@ -1,16 +1,6 @@
 import { useState, useEffect } from "react";
-
-
-interface Bill {
-  id: string,
-  ownerId: string,
-  name: string,
-  amount: string | null,
-  dueDate: string,
-  recurrence: string,
-  isPaid: boolean,
-  createdAt: string
-}
+import { type Bill } from "../types";
+import { Link } from "react-router-dom";
 
 
 export default function Home() { 
@@ -18,7 +8,6 @@ export default function Home() {
   const [error, setError] = useState("");
   const [bills, setBills] = useState<Bill[]>([]);
   const url: string = "/api/bills/";
-
 
   // this runs once when the component first renders
   useEffect(() => {
@@ -48,14 +37,18 @@ export default function Home() {
 
   return (
     <div>
-      <h1>Home Page</h1>
       { loading && <p>Loading...</p>}
       { error && <p>{error}</p> }
+      <Link to="/bills/new">+ New Bill</Link>
+      <br /> <br />
       {!loading && !error && bills.map((bill) => (
         <div key={bill.id}>
-          <p>{bill.name}</p>
+          <Link to={`/bills/${bill.id}`}>
+            <p>{bill.name}</p>
+          </Link>
           <p>{bill.amount ? `$${bill.amount}` : "Unknown"}</p>
           <p>{new Date(bill.dueDate).toLocaleDateString()}</p>
+          <br />
         </div>
       ))}
     </div>
