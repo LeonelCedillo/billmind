@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { type BillDetails } from "../types";
 
@@ -11,6 +11,8 @@ export default function Bill() {
   const path = `/api/bills/${id}`;
   // New member to add:
   const [userId, setUserId] = useState("");
+  // New reminder rule to add: (remind me this amount of days before the due date)
+  const [daysBeforeDue, setDaysBeforeDue] = useState<number | undefined>(undefined);
 
 
   // Same fetchBill function between renders unless `path` changes
@@ -46,6 +48,7 @@ export default function Bill() {
     const token = localStorage.getItem("token");
     const billId = bill?.bill.id;
     const memberPath = `/api/bills/${billId}/members`;
+    if (!billId) return;
     try {
       const response = await fetch(memberPath, {
         method: "POST",
@@ -61,8 +64,34 @@ export default function Bill() {
     } catch (err) {
       setError("Something went wrong");
     } finally {
-      fetchBill();
+      await fetchBill();
       setUserId("");
+    }
+  }
+
+
+  async function handleAddRule(e: React.SubmitEvent) {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    const billId = bill?.bill.id;
+    const reminderPath = `/api/bills/${billId}/reminders`;
+    try {
+      const response = await fetch(reminderPath, {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({daysBeforeDue})
+      });
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+    } catch (err) {
+      setError("Something went wrong");
+    } finally {
+      await fetchBill();
+      setDaysBeforeDue(undefined);
     }
   }
 
@@ -103,6 +132,18 @@ export default function Bill() {
               <br />
             </div>
           ))}
+
+          <form onSubmit={handleAddRule}>
+            <input 
+              type="number" 
+              min={0} 
+              value={daysBeforeDue ?? ""} 
+              onChange={(e) => setDaysBeforeDue(
+                e.target.value === "" ? undefined : Number(e.target.value)
+              )} 
+            />
+            <button type="submit">Add Rule</button>
+          </form>
         </div>
       }
     </div>
