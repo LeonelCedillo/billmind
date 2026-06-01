@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Button } from "./ui/button";
 
 
 export default function Navigation() {
@@ -16,8 +17,7 @@ export default function Navigation() {
     <div>
       {!hideDashboardLink && <Link to="/dashboard">Dashboard</Link>}
       <Link to="bills/new">+ New Bill</Link>
-      <br />
-      <button onClick={handleLogout}>Logout</button>
+      <Button onClick={handleLogout}>Logout</Button>
     </div>
   );
 }

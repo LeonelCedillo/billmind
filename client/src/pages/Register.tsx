@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Label } from "#components/ui/label";
+import { Input } from "#components/ui/input";
+import { Button } from "#components/ui/button";
 
 
 export default function Register() { 
@@ -29,28 +32,28 @@ export default function Register() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>username</label>
-      <input 
+      <Label>username</Label>
+      <Input 
         type="text" 
         value={username} 
         onChange={(e) => setUsername(e.target.value)} 
       />
       <br />
-      <label>email</label>
-      <input 
+      <Label>email</Label>
+      <Input 
         type="email" 
         value={email} 
         onChange={(e) => setEmail(e.target.value)} 
       />
       <br />
-      <label>password</label>
-      <input 
+      <Label>password</Label>
+      <Input 
         type="password" 
         value={password} 
         onChange={(e) => setPassword(e.target.value)} 
       />
       { error && <p>{error}</p> }
-      <button>Register</button>
+      <Button>Register</Button>
     </form>
   );
 }

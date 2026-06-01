@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { type BillDetails } from "../types";
+import { Input } from "#components/ui/input";
+import { Button } from "#components/ui/button";
 
 
 export default function Bill() { 
@@ -120,8 +122,8 @@ export default function Bill() {
           <br />
 
           <form onSubmit={handleAddMember}>
-            <input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} />
-            <button type="submit">Add Member</button>
+            <Input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} />
+            <Button type="submit">Add Member</Button>
           </form>
 
           <br />
@@ -134,7 +136,7 @@ export default function Bill() {
           ))}
 
           <form onSubmit={handleAddRule}>
-            <input 
+            <Input 
               type="number" 
               min={0} 
               value={daysBeforeDue ?? ""} 
@@ -142,7 +144,7 @@ export default function Bill() {
                 e.target.value === "" ? undefined : Number(e.target.value)
               )} 
             />
-            <button type="submit">Add Rule</button>
+            <Button type="submit">Add Rule</Button>
           </form>
         </div>
       }

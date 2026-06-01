@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Label } from "#components/ui/label";
+import { Input } from "#components/ui/input";
+import { Button } from "#components/ui/button";
 
 
 export default function NewBill() { 
@@ -39,14 +42,14 @@ export default function NewBill() {
   }
   return (
     <form onSubmit={handleSubmit}>
-      <label>Bill Name</label>
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+      <Label>Bill Name</Label>
+      <Input type="text" value={name} onChange={(e) => setName(e.target.value)} />
       <br />
-      <label>Due Date</label>
-      <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+      <Label>Due Date</Label>
+      <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
       <br />
-      <label>Amount</label>
-      <input type="number" value={amount ?? ""} 
+      <Label>Amount</Label>
+      <Input type="number" value={amount ?? ""} 
         onChange={(e) => setAmount(e.target.value ? Number(e.target.value) : undefined)} 
       />
       <br />
@@ -58,7 +61,7 @@ export default function NewBill() {
         <option value="yearly">Yearly</option>
       </select>
       <br />
-      <button type="submit">Submit</button>
+      <Button type="submit">Submit</Button>
       {error && <p>{error}</p>}
     </form>
   ); 
