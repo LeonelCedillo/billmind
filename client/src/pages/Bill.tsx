@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { type BillDetails } from "../types";
 import { Input } from "#components/ui/input";
 import { Button } from "#components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "#components/ui/card";
+import { Badge } from "#components/ui/badge";
 
 
 export default function Bill() { 
@@ -99,54 +101,71 @@ export default function Bill() {
 
 
   return (
-    <div>
-      <Link to="/dashboard">Dashboard</Link>
-      <br /> <br />
-      <h2>{bill?.bill.name}</h2>
+    <div>      
       { loading && <p>Loading</p>}
       { error && <p>{error}</p> }
       { !loading && !error && bill &&
-        <div>
-          <p>{bill.bill.amount ? `$${bill.bill.amount}` : "Unknown"}</p>
-          <p>{new Date(bill.bill.dueDate).toLocaleDateString()}</p>
-          <p>{bill.bill.recurrence}</p>
-          <br />
-          <h2>Members</h2>
-          {bill.members.map(member => (
-            <div key={member.userId}>
-              <p>{member.userName}</p>
-              <p>{member.email}</p>
-              <br />
+      <div className="flex gap-4">
+        <Card className="max-w-sm shrink-0">
+          <CardHeader>
+            <CardTitle>{bill?.bill.name}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{bill.bill.amount ? `$${bill.bill.amount}` : "Unknown"}</p>
+            <p>{new Date(bill.bill.dueDate).toLocaleDateString()}</p>
+            <div className="flex gap-2 mt-2">
+              <Badge>{bill.bill.recurrence}</Badge>
+              <Badge variant={bill.bill.isPaid ? "default" : "destructive"}>
+                {bill.bill.isPaid ? "Paid" : "Unpaid"}
+              </Badge>
+            </div>             
+          </CardContent>
+        </Card>
+
+        <Card className="max-w-sm shrink-0">
+          <CardHeader>
+            <CardTitle>Members</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {bill.members.map(member => (
+              <div key={member.userId}>
+                <Badge variant={"secondary"}>{member.userName}</Badge>
+                <Badge variant={"outline"}>{member.email}</Badge>
+              </div>
+            ))}
+            <form onSubmit={handleAddMember}>
+              <Input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} />
+              <Button type="submit">Add Member</Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card className="max-w-sm shrink-0">
+          <CardHeader>
+            <CardTitle>Rules</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2 mt-2">
+              {bill.rules.map(rule => (
+                <div key={rule.id}>
+                  <Badge>{rule.daysBeforeDue}</Badge>
+                </div>
+              ))}
             </div>
-          ))}
-          <br />
-
-          <form onSubmit={handleAddMember}>
-            <Input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} />
-            <Button type="submit">Add Member</Button>
-          </form>
-
-          <br />
-          <h2>Rules</h2>
-          {bill.rules.map(rule => (
-            <div key={rule.id}>
-              <p>{rule.daysBeforeDue}</p>
-              <br />
-            </div>
-          ))}
-
-          <form onSubmit={handleAddRule}>
-            <Input 
-              type="number" 
-              min={0} 
-              value={daysBeforeDue ?? ""} 
-              onChange={(e) => setDaysBeforeDue(
-                e.target.value === "" ? undefined : Number(e.target.value)
-              )} 
-            />
-            <Button type="submit">Add Rule</Button>
-          </form>
-        </div>
+            <form onSubmit={handleAddRule}>
+              <Input 
+                type="number" 
+                min={0} 
+                value={daysBeforeDue ?? ""} 
+                onChange={(e) => setDaysBeforeDue(
+                  e.target.value === "" ? undefined : Number(e.target.value)
+                )} 
+              />
+              <Button type="submit">Add Rule</Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
       }
     </div>
   ); 
