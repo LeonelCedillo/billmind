@@ -6,6 +6,7 @@ import { Button } from "#components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "#components/ui/card";
 import { Badge } from "#components/ui/badge";
 import BillForm from "#components/BillForm";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Bill() { 
@@ -19,6 +20,7 @@ export default function Bill() {
   const [userId, setUserId] = useState("");
   // New reminder rule to add: (remind me this amount of days before the due date)
   const [daysBeforeDue, setDaysBeforeDue] = useState<number | undefined>(undefined);
+  const navigate = useNavigate();
 
 
   // Same fetchBill function between renders unless `path` changes
@@ -98,6 +100,24 @@ export default function Bill() {
     } finally {
       await fetchBill();
       setDaysBeforeDue(undefined);
+    }
+  }
+
+
+  async function handleDelete() {
+    if (!window.confirm("Are you sure you want to delete this bill?")) return;
+    const token = localStorage.getItem("token");
+    const billId = bill?.bill.id;
+    const deletePath = `/api/bills/${billId}`;
+    try {
+      const response = await fetch(deletePath, {
+        method: "DELETE",
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error("Failed to delete");
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Could not delete bill")
     }
   }
 
@@ -183,6 +203,7 @@ export default function Bill() {
             </form>
           </CardContent>
         </Card>
+        <Button onClick={handleDelete} variant="destructive">Delete</Button>
       </div>
       }
     </div>
