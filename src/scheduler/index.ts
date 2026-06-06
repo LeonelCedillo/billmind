@@ -17,8 +17,11 @@ async function publishReminders(publishCh: ConfirmChannel) {
     const billReminderEvent: BillReminderEvent = {
       billId: bill.id,
       billName: bill.name,
-      amount: bill.amount,
-      dueDate: bill.dueDate,
+      amount: bill.amount ?? undefined, 
+      recurrence: bill.recurrence as "once" | "monthly" | "yearly",
+      dueDate: bill.dueDate ?? undefined,
+      dueDayOfMonth: bill.dueDayOfMonth ?? undefined,
+      dueMonth: bill.dueMonth ?? undefined,
       daysBeforeDue: bill.daysBeforeDue,
       recipientUsername: bill.recipientUsername,
       recipientEmail: bill.recipientEmail,
