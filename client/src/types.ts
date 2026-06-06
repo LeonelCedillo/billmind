@@ -1,12 +1,15 @@
+export type Recurrence = "once" | "monthly" | "yearly";
+
 export interface Bill {
   id: string,
   ownerId: string,
   name: string,
-  amount: string | null,
-  dueDate: string,
-  recurrence: string,
+  recurrence: Recurrence;
+  amount?: string,
+  dueDate?: string,
+  dueDayOfMonth?: number,
+  dueMonth?: number,
   isPaid: boolean,
-  createdAt: string
 }
 
 export interface Member {
