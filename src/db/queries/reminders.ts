@@ -9,7 +9,10 @@ export async function getBillsWithRemindersForToday() {
       id: bills.id,
       name: bills.name,
       amount: bills.amount,
+      recurrence: bills.recurrence,
       dueDate: bills.dueDate,
+      dueDayOfMonth: bills.dueDayOfMonth,
+      dueMonth: bills.dueMonth,
       daysBeforeDue: reminderRules.daysBeforeDue,
       recipientUsername: users.username,
       recipientEmail: users.email,
@@ -19,8 +22,18 @@ export async function getBillsWithRemindersForToday() {
     .innerJoin(reminderRules, eq(billMembers.billId, reminderRules.billId))
     .innerJoin(users, eq(users.id, billMembers.userId))
     .where(
-      sql`${bills.dueDate}::date - ${reminderRules.daysBeforeDue} * INTERVAL '1 day' = CURRENT_DATE`
-    );
-
+      sql`
+      (${bills.recurrence} = 'once' AND 
+        ${bills.dueDate}::date - ${reminderRules.daysBeforeDue} * INTERVAL '1 day' = CURRENT_DATE)
+      OR
+      (${bills.recurrence} = 'monthly' AND 
+        (DATE_TRUNC('month', CURRENT_DATE) + (${bills.dueDayOfMonth} - 1) * INTERVAL '1 day')::date 
+        - ${reminderRules.daysBeforeDue} * INTERVAL '1 day' = CURRENT_DATE)
+      OR
+      (${bills.recurrence} = 'yearly' AND 
+        MAKE_DATE(EXTRACT(YEAR FROM CURRENT_DATE)::int, ${bills.dueMonth}, ${bills.dueDayOfMonth})::date
+        - ${reminderRules.daysBeforeDue} * INTERVAL '1 day' = CURRENT_DATE)
+      `
+    )
   return result;
 }

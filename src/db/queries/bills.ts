@@ -32,9 +32,11 @@ export async function getBillsByMember(userId: string) {
       id: bills.id,
       ownerId: bills.ownerId,
       name: bills.name,
+      recurrence: bills.recurrence,
       amount: bills.amount,
       dueDate: bills.dueDate,
-      recurrence: bills.recurrence,
+      dueDayOfMonth: bills.dueDayOfMonth,
+      dueMonth: bills.dueMonth,
       isPaid: bills.isPaid,
       createdAt: bills.createdAt
     })
@@ -107,9 +109,11 @@ export async function updateBill(id:string, billUpdate: Partial<Omit<NewBill, "o
     .update(bills)
     .set({
       name: billUpdate.name,
-      dueDate: billUpdate.dueDate,
       recurrence: billUpdate.recurrence,
       amount: billUpdate.amount,
+      dueDate: billUpdate.dueDate,
+      dueDayOfMonth: billUpdate.dueDayOfMonth,
+      dueMonth: billUpdate.dueMonth, 
       isPaid: billUpdate.isPaid
     })
     .where(eq(bills.id, id))

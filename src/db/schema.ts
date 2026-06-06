@@ -6,8 +6,10 @@ import {
   numeric, 
   boolean, 
   unique, 
-  integer 
+  integer,
+  check
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 
 export const users = pgTable("users", {
@@ -28,11 +30,24 @@ export const bills = pgTable("bills", {
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   amount: numeric("amount"),
-  dueDate: timestamp("due_date").notNull(),
   recurrence: text("recurrence").notNull(),
+  dueDate: timestamp("due_date"), // for one time payments
+  dueDayOfMonth: integer("due_day_of_month"), // used by monthly and yearly bills
+  dueMonth: integer("due_month"), // for yearly bills
   isPaid: boolean("is_paid").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull()
-});
+},
+  (table) => [
+    check(
+      "due_day_of_month",
+      sql`${table.dueDayOfMonth} IS NULL OR (${table.dueDayOfMonth} >= 1 AND ${table.dueDayOfMonth} <= 31)`
+    ),
+    check(
+      "due_month",
+      sql`${table.dueMonth} IS NULL OR (${table.dueMonth} >= 1 AND ${table.dueMonth} <= 12)`
+    )
+  ]
+);
 
 export type Bill = typeof bills.$inferSelect;
 export type NewBill = typeof bills.$inferInsert;
