@@ -9,10 +9,22 @@ CREATE TABLE "bills" (
 	"owner_id" uuid NOT NULL,
 	"name" text NOT NULL,
 	"amount" numeric,
-	"due_date" timestamp NOT NULL,
 	"recurrence" text NOT NULL,
+	"due_date" timestamp,
+	"due_day_of_month" integer,
+	"due_month" integer,
 	"is_paid" boolean DEFAULT false NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "due_day_of_month" CHECK ("bills"."due_day_of_month" IS NULL OR ("bills"."due_day_of_month" >= 1 AND "bills"."due_day_of_month" <= 31)),
+	CONSTRAINT "due_month" CHECK ("bills"."due_month" IS NULL OR ("bills"."due_month" >= 1 AND "bills"."due_month" <= 12))
+);
+--> statement-breakpoint
+CREATE TABLE "refresh_tokens" (
+	"token_hash" varchar(64) PRIMARY KEY NOT NULL,
+	"user_id" uuid NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"expires_at" timestamp NOT NULL,
+	"revoked_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "reminder_rules" (
@@ -34,4 +46,5 @@ CREATE TABLE "users" (
 ALTER TABLE "bill_members" ADD CONSTRAINT "bill_members_bill_id_bills_id_fk" FOREIGN KEY ("bill_id") REFERENCES "public"."bills"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "bill_members" ADD CONSTRAINT "bill_members_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "bills" ADD CONSTRAINT "bills_owner_id_users_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "refresh_tokens" ADD CONSTRAINT "refresh_tokens_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reminder_rules" ADD CONSTRAINT "reminder_rules_bill_id_bills_id_fk" FOREIGN KEY ("bill_id") REFERENCES "public"."bills"("id") ON DELETE cascade ON UPDATE no action;
