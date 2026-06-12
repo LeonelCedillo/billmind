@@ -9,7 +9,12 @@ export default function Navigation() {
   const hideDashboardLink = ["/dashboard"].includes(location.pathname);
   const hideNewBillButton = ["/bills/new"].includes(location.pathname);
 
-  function handleLogout() {
+  async function handleLogout() {
+    const refreshToken = localStorage.getItem("refreshToken");
+    await fetch("/api/auth/revoke", {
+      method: 'POST',
+      headers: {'Authorization': `Bearer ${refreshToken}`}
+    });
     localStorage.clear();
     navigate("/");
   }
