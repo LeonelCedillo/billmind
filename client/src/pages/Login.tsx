@@ -7,11 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "#components/ui/card";
 
 
 interface LoginResponse {
-  id: number;
+  id: string;
   username: string;
   email: string;
   createdAt: string;
   token: string;
+  refreshToken: string;
 }
 
 
@@ -35,6 +36,7 @@ export default function Login() {
     }
     const data = await response.json() as LoginResponse;
     localStorage.setItem('token', data.token);
+    localStorage.setItem('refreshToken', data.refreshToken);
     navigate("/dashboard");
   }
 
