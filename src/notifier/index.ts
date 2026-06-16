@@ -1,6 +1,6 @@
 import "dotenv/config";
 import amqp from "amqplib";
-import { BillReminderPrefix, ExchangeBillMindTopic } from "../routing/routing.js";
+import { BillReminderPrefix, ExchangeBillMindDL, ExchangeBillMindTopic } from "../routing/routing.js";
 import { SimpleQueueType, AckType, subscribeJSON } from "../pubsub/consume.js";
 import type { BillReminderEvent } from "../types/index.js";
 import { sendReminderEmail } from "./mailer.js";
@@ -28,6 +28,11 @@ async function main() {
 
   const ch = await conn.createChannel();
   await ch.assertExchange(ExchangeBillMindTopic, "topic", { durable: true });
+  await ch.assertExchange(ExchangeBillMindDL, "fanout", { durable: true });
+
+  // Declare a durable queue bound to the DL exchange
+  const dlQueue = await ch.assertQueue("billmind_dl_queue", { durable: true});
+  await ch.bindQueue(dlQueue.queue, ExchangeBillMindDL, ""); // fanout ignores routing keys
 
   // Declares a Single queue (and binds it to an Exhange) 
   // subscribing to all reminder events via wildcard
@@ -43,9 +48,13 @@ async function main() {
 
 export function handlerLog(): (event: BillReminderEvent) => Promise<AckType>{
   return async (event: BillReminderEvent): Promise<AckType> => {
-    await sendReminderEmail(event);
-    console.log(`Reminder: ${event.recipientUsername} - ${event.billName} due in ${event.daysBeforeDue} days`);
-    return AckType.Ack;
+    try {
+      await sendReminderEmail(event);
+      console.log(`Reminder: ${event.recipientUsername} - ${event.billName} due in ${event.daysBeforeDue} days`);
+      return AckType.Ack;
+    } catch (err) {
+      return AckType.NackDiscard;
+    }
   }
 }
 
