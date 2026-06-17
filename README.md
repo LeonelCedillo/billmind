@@ -29,3 +29,32 @@ I also kept missing upcoming payments and juggling reminders across different ap
 See the [Contributing](#-contributing) section for full local setup instructions.
 
 
+## 📖 Usage
+
+### Architecture
+
+BillMind uses an **event-driven pub/sub architecture** powered by RabbitMQ. Three independent services communicate through a topic exchange:
+
+- **Server** — handles all REST API requests
+- **Scheduler** — runs daily at 8am, checks for upcoming bills and publishes reminder events to RabbitMQ
+- **Notifier** — subscribes to RabbitMQ and sends emails when reminder events arrive
+
+Failed emails are routed to a Dead Letter Queue instead of being lost.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register |
+| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/refresh` | Refresh access token |
+| POST | `/api/auth/revoke` | Logout |
+| GET | `/api/bills` | Get all your bills |
+| POST | `/api/bills` | Create a bill |
+| GET | `/api/bills/:id` | Get bill details |
+| PUT | `/api/bills/:id` | Update a bill |
+| DELETE | `/api/bills/:id` | Delete a bill |
+| POST | `/api/bills/:id/members` | Add a member by email |
+| POST | `/api/bills/:id/reminders` | Add a reminder rule |
+
+
