@@ -17,8 +17,19 @@ export type BillParameters = {
   isPaid?: boolean
 }
 
+export type UpdateBill = Omit<NewBill, "ownerId" | "id" | "createdAt">;
 
-export type UpdateBill = Omit<NewBill, "ownerId" | "id" | "createdAt">
+
+export function mapBillParams(params: BillParameters) {
+  return {
+    name: params.name,
+    recurrence: params.recurrence,
+    amount: params.amount ? String(params.amount) : null,
+    dueDate: params.dueDate ? new Date(`${params.dueDate}T00:00:00`) : null,
+    dueDayOfMonth: params.dueDayOfMonth ? params.dueDayOfMonth : null,
+    dueMonth: params.dueMonth ? params.dueMonth : null
+  }
+}
 
 
 export function validateBillParams(params: BillParameters) {
