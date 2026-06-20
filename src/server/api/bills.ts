@@ -51,14 +51,7 @@ export async function handlerBillMembersAdd(req: Request, res: Response) {
     throw new BadRequestError("Missing Required Field");
   }
 
-  // verify bill ownership
-  const bill = await getBill(billId);
-  if (!bill) {
-    throw new NotFoundError(`Bill with id: ${billId} not found`);
-  }
-  if (bill.ownerId !== untrustedUserId) {
-    throw new UserForbiddenError("User forbidden");
-  }
+  await verifyBillOwnership(untrustedUserId, billId);
 
   // look up the user (new member)
   const userFound = await getUserByEmail(newBillMemberEmail);
@@ -92,14 +85,7 @@ export async function handlerBillRemindersAdd(req: Request, res: Response) {
     throw new BadRequestError("Missing Required Field");
   }  
 
-  const bill = await getBill(newReminderRule.billId);
-
-  if (!bill) {
-    throw new NotFoundError(`Bill with id: ${newReminderRule.billId} not found`);
-  }
-  if (bill.ownerId !== untrustedUserId) {
-    throw new UserForbiddenError("User forbidden");
-  }  
+  await verifyBillOwnership(untrustedUserId, newReminderRule.billId);
 
   const reminderRule = await addReminderRule(newReminderRule);
   if (!reminderRule) {
@@ -136,7 +122,7 @@ export async function handlerBillsDelete(req: Request<{ billId: string}>, res: R
   const untrustedUserId = validateJWT(token, config.secret);
   const { billId } = req.params;
   await verifyBillOwnership(untrustedUserId, billId);
-  
+
   const deleted = await deleteBill(billId);
   if (!deleted) {
     throw new Error(`Failed to delete bill with billId: ${billId}`);
