@@ -1,12 +1,22 @@
 import type { Request, Response } from "express";
-import type { NewBill, NewBillMember, NewReminderRule } from "../../db/schema.js";
 import type { BillParameters, UpdateBill } from "./helpers.js";
-import { addBillMember, createBill, addReminderRule, getBill, getBillsByMember, getBillWithRelations, deleteBill, updateBill } from "../../db/queries/bills.js";
+import type { NewBill, NewBillMember, NewReminderRule } from "../../db/schema.js";
 import { BadRequestError, NotFoundError, UserForbiddenError } from "./errors.js";
 import { validateBillParams, verifyBillOwnership } from "./helpers.js";
 import { getBearerToken, validateJWT } from "./auth.js";
-import { config } from "../../config.js";
 import { getUserByEmail } from "../../db/queries/users.js";
+import { config } from "../../config.js";
+import { 
+  createBill, 
+  addBillMember, 
+  addReminderRule, 
+  getBill, 
+  getBillsByMember, 
+  getBillWithRelations, 
+  updateBill,
+  deleteBill, 
+} from "../../db/queries/bills.js";
+
 
 export async function handlerBillsCreate(req: Request, res: Response) {
   const token = getBearerToken(req);
@@ -122,16 +132,11 @@ export async function handlerBillGet(req: Request, res: Response) {
 
 
 export async function handlerBillsDelete(req: Request<{ billId: string}>, res: Response) {
-  const { billId } = req.params;
   const token = getBearerToken(req);
   const untrustedUserId = validateJWT(token, config.secret);
-  const bill = await getBill(billId);
-  if (!bill) {
-    throw new NotFoundError(`Bill with billId: ${billId} not found`);
-  }
-  if (bill.ownerId !== untrustedUserId) {
-    throw new UserForbiddenError("");
-  }
+  const { billId } = req.params;
+  await verifyBillOwnership(untrustedUserId, billId);
+  
   const deleted = await deleteBill(billId);
   if (!deleted) {
     throw new Error(`Failed to delete bill with billId: ${billId}`);
