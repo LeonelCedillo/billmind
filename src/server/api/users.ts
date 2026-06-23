@@ -41,3 +41,8 @@ export async function handlerUsersCreate(req: Request, res: Response) {
     createdAt: user.createdAt
   } satisfies UserResponse);
 }
+
+
+export async function handlerUsersUpdate(req: Request, res: Response) {
+  
+}
