@@ -15,7 +15,7 @@ export default function Register() {
 
   async function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault();
-    const path = "/api/auth/register";
+    const path = "/api/users/register";
     try {
       const response = await fetch(path, {
         method: "POST",

@@ -6,7 +6,7 @@ import { handlerUsersUpdate } from "../api/users.js";
 const router = Router();
 
 
-router.post("/register", async (req, res, next) => { // TODO: change to 'users' and fix frontend
+router.post("/register", async (req, res, next) => {
   try {
     await handlerUsersCreate(req, res);
   } catch (err) {
@@ -14,7 +14,7 @@ router.post("/register", async (req, res, next) => { // TODO: change to 'users' 
   }
 });
 
-router.put("/update", async (req, res, next) => { // TODO: change to 'users' too and move to new usersRoutes file
+router.put("/update", async (req, res, next) => {
   Promise.resolve(handlerUsersUpdate(req, res).catch(next));
 });
 
