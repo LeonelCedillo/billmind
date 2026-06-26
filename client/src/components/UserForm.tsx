@@ -7,15 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "#components/ui/card";
 import { apiFetch } from "../utils/auth";
 
 
-type UserFormProps = {
+export type UserFormProps = {
   path: string;
   title: string;
   reqMethod: string;
-  submitName: string;
+  submitBtnName: string;
 }
 
 
-export default function userForm(props: UserFormProps) {       // TODO: refactor this file ************************************************8
+export default function UserForm(props: UserFormProps) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -72,7 +72,7 @@ export default function userForm(props: UserFormProps) {       // TODO: refactor
               />
             </div>
             { error && <p>{error}</p> }
-            <Button>{props.submitName}</Button>
+            <Button>{props.submitBtnName}</Button>
           </form>
         </CardContent>
       </Card>
