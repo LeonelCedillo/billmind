@@ -28,7 +28,7 @@ export default function UserForm(props: UserFormProps) {
     try {
       const response = await apiFetch(props.path, { 
         method: props.reqMethod, 
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }) 
       });
       if (!response.ok) {
