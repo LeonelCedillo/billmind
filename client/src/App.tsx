@@ -2,11 +2,11 @@ import './App.css';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Register from './pages/Register';
+import UserRegister from './pages/UserRegister';
 import Dashboard from './pages/Dashboard';
 import BillNew from './pages/BillNew';
 import Bill from './pages/Bill';
-import UpdateUser from './pages/UpdateUser';
+import UserUpdate from './pages/UserUpdate';
 import Navigation from './components/Navbar';
 import { isAuthenticated } from './utils/auth';
 document.documentElement.classList.add("dark");
@@ -32,13 +32,13 @@ function AppContent() {
       <br />
       <Routes>
         <Route path='/' element={<PublicRoute><Home /></PublicRoute>}/>  
-        <Route path='/register' element={<PublicRoute><Register /></PublicRoute>}/>  
+        <Route path='/register' element={<PublicRoute><UserRegister /></PublicRoute>}/>  
         <Route path='/login' element={<PublicRoute><Login /></PublicRoute>}/>  
         <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path='/bills/new' element={<ProtectedRoute><BillNew /></ProtectedRoute>}/>  
         <Route path='/bills/:id' element={<ProtectedRoute><Bill /></ProtectedRoute>}/>  
         <Route path='*' element={<Navigate to={isAuthenticated() ? "/dashboard" : "/"}/>} />
-        <Route path='/update' element={<ProtectedRoute><UpdateUser /></ProtectedRoute>}/>  
+        <Route path='/update' element={<ProtectedRoute><UserUpdate /></ProtectedRoute>}/>  
       </Routes>
     </div>
   );
