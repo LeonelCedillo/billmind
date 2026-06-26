@@ -10,6 +10,7 @@ import { apiFetch } from "../utils/auth";
 export type UserFormProps = {
   path: string;
   title: string;
+  redirect: string;
   reqMethod: string;
   submitBtnName: string;
 }
@@ -33,7 +34,7 @@ export default function UserForm(props: UserFormProps) {
       if (!response.ok) {
         throw new Error("Request failed");
       }
-      navigate("/dashboard");
+      navigate(props.redirect);
     } catch {
       setError("Something went wrong");
     } 

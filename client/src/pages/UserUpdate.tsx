@@ -6,6 +6,7 @@ export default function UpdateUser() {
   const props: UserFormProps = {
     path: "/api/users/update",
     title: "Update User",
+    redirect: "/dashboard",
     reqMethod: "PUT",
     submitBtnName: "Update"
   }
