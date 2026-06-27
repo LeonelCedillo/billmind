@@ -7,7 +7,7 @@ import { handlerUsersDelete } from "../api/users.js";
 const router = Router();
 
 
-router.post("/register", async (req, res, next) => { // remove /register
+router.post("/", async (req, res, next) => { // register new user
   try {
     await handlerUsersCreate(req, res);
   } catch (err) {
@@ -15,7 +15,7 @@ router.post("/register", async (req, res, next) => { // remove /register
   }
 });
 
-router.put("/update", async (req, res, next) => { // remove /update
+router.put("/", async (req, res, next) => { // update user info
   Promise.resolve(handlerUsersUpdate(req, res).catch(next));
 });
 
