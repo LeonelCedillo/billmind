@@ -4,7 +4,7 @@ import type { UserFormProps } from "#components/UserForm";
 
 export default function Register() {
   const props: UserFormProps = {
-    path: "/api/users/register",
+    path: "/api/users",
     title: "Create your account",
     redirect: "/login",
     reqMethod: "POST",
